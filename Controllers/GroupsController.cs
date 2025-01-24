@@ -19,6 +19,26 @@ namespace SecretSanta.Controllers
             _service = service;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllGroups(){
+            var groups = await _service.GetAllGroupsAsync();
+            return Ok(groups);
+        }
+
+        [HttpGet("{groupId}")]
+        public async Task<IActionResult> GetGroupById(int groupId)
+        {
+            var result = await _service.GetGroupByIdAsync(groupId);
+            return Ok(new { result.Id, result.Name, result.IsGeneratedMatches, result.Description,
+                people = result.People.Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.GiftDescription,
+                    p.GroupId
+                }).ToList()});
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] GroupCreateDTO dto){
             if(dto.Name == null) return BadRequest("The group name is required for its creation.");
@@ -53,19 +73,6 @@ namespace SecretSanta.Controllers
             }
         }
 
-        [HttpGet("{groupId}")]
-        public async Task<IActionResult> GetGroupById(int groupId)
-        {
-            var result = await _service.GetGroupByIdAsync(groupId);
-            return Ok(new { result.Id, result.Name, result.IsGeneratedMatches, result.Description,
-                people = result.People.Select(p => new
-                {
-                    p.Id,
-                    p.Name,
-                    p.GiftDescription,
-                    p.GroupId
-                }).ToList()});
-        }
     }
     
 }

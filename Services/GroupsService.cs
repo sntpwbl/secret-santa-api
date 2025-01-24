@@ -61,9 +61,20 @@ namespace SecretSanta.Services
             return dto;
         }
 
-        public Task<ICollection<GroupDTO>> GetAllGroupsAsync()
+        public async Task<ICollection<GroupDTO>> GetAllGroupsAsync()
         {
-            throw new NotImplementedException();
+            var groups = await _context.Groups
+            .ToListAsync();
+
+            var groupDTOs = groups.Select(g => new GroupDTO(
+                g.Id,
+                g.Name,
+                g.IsGeneratedMatches,
+                g.Description,
+                g.People
+            )).ToList();
+
+            return groupDTOs;
         }
 
         public async Task<GroupDTO> GetGroupByIdAsync(int groupId)
