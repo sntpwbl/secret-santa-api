@@ -88,6 +88,19 @@ namespace SecretSanta.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpPatch("{personId}/{groupId}")]
+        public async Task<IActionResult> RemovePersonFromGroup(int personId, int groupId)
+        {
+            var result = await _service.RemovePersonFromGroupAsync(personId, groupId);
+            return Ok(new { result.Id, result.Name, result.IsGeneratedMatches, result.Description,
+            people = result.People.Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.GiftDescription,
+                p.GroupId
+            }).ToList()});
+        }
 
         [HttpPut("{groupId}")]
         public async Task<IActionResult> UpdateGroup(int groupId, GroupUpdateDTO dto){
