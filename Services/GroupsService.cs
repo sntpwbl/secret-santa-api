@@ -5,13 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using SecretSanta.Context;
+using SecretSanta.DTO;
 using SecretSanta.Entities;
 
 namespace SecretSanta.Services
 {
     public interface IGroupsService
     {
-        Task<Group> CreateGroupAsync(string groupName);
+        Task<Group> CreateGroupAsync(GroupDTO dto);
     }
 
     public class GroupsService : IGroupsService
@@ -22,10 +23,10 @@ namespace SecretSanta.Services
         {
             _context = context;
         }
-        public async Task<Group> CreateGroupAsync(string groupName){
+        public async Task<Group> CreateGroupAsync(GroupDTO dto){
             
             Group group = new Group{
-                Name = groupName,
+                Name = dto.Name,
                 People = new Collection<Person>()
             };
 
