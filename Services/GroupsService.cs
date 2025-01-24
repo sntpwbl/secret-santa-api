@@ -15,8 +15,8 @@ namespace SecretSanta.Services
 {
     public interface IGroupsService
     {
-        Task<Group> CreateGroupAsync(GroupDTO dto);
-        Task<Group> AddPersonToGroupAsync(int personId, int groupId);
+        Task<GroupDTO> CreateGroupAsync(GroupCreateDTO dto);
+        Task<GroupDTO> AddPersonToGroupAsync(int personId, int groupId);
     }
 
     public class GroupsService : IGroupsService
@@ -27,24 +27,29 @@ namespace SecretSanta.Services
         {
             _context = context;
         }
-        public async Task<Group> CreateGroupAsync(GroupDTO dto){
+        public async Task<GroupDTO> CreateGroupAsync(GroupCreateDTO dto){
             
             Group group = new Group{
                 Name = dto.Name,
-                People = new Collection<Person>()
+                HashedPassword = dto.Password,
+                Description = dto.Description??null,
+                People = []
             };
 
             var createdGroup = await _context.Groups.AddAsync(group);
             await _context.SaveChangesAsync();
-            
-            group.Id = createdGroup.Entity.Id;
-            group.Name = createdGroup.Entity.Name;
-            group.People = createdGroup.Entity.People;
 
-            return group;
+            GroupDTO result = new GroupDTO(
+                createdGroup.Entity.Id,
+                createdGroup.Entity.Name,
+                createdGroup.Entity.IsGeneratedMatches,
+                createdGroup.Entity.Description,
+                createdGroup.Entity.People
+            );            
+            return result;
         }
 
-        public async Task<Group> AddPersonToGroupAsync(int personId, int groupId){
+        public async Task<GroupDTO> AddPersonToGroupAsync(int personId, int groupId){
             Person person = await _context.People.FindAsync(personId)
                             ?? throw new NotFoundException($"Person not found for ID {personId}.");
 
@@ -56,7 +61,9 @@ namespace SecretSanta.Services
             group.People.Add(person);
 
             await _context.SaveChangesAsync();
-            return group;
+
+            GroupDTO dto = new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
+            return dto;
         }
     }
 }

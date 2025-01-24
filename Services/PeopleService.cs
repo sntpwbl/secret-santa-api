@@ -11,7 +11,7 @@ namespace SecretSanta.Services
 {
     public interface IPeopleService
     {
-        Task<Person> CreatePersonAsync(PersonDTO dto);
+        Task<PersonDTO> CreatePersonAsync(PersonCreateDTO dto);
     }
     public class PeopleService : IPeopleService
     {
@@ -20,21 +20,23 @@ namespace SecretSanta.Services
             _context = context;
         }
 
-        public async Task<Person> CreatePersonAsync(PersonDTO dto)
+        public async Task<PersonDTO> CreatePersonAsync(PersonCreateDTO dto)
         {
             Person person = new Person{
-                Name = dto.Name
+                Name = dto.Name,
+                HashedPassword = dto.Password
             };
             EntityEntry<Person> createdPerson = await _context.People.AddAsync(person);
             await _context.SaveChangesAsync();
             
-            person = new Person{
-                Id = createdPerson.Entity.Id,
-                Name = createdPerson.Entity.Name,
-                GroupId = createdPerson.Entity.GroupId,
-            };
+            PersonDTO result = new PersonDTO(
+                createdPerson.Entity.Id,
+                createdPerson.Entity.Name,
+                createdPerson.Entity.GiftDescription,
+                createdPerson.Entity.GroupId
+            );
 
-            return person;
+            return result;
 
         }
         

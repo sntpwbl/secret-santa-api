@@ -19,7 +19,7 @@ namespace SecretSanta.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreatePerson(PersonDTO dto){
+        public async Task<IActionResult> CreatePerson(PersonCreateDTO dto){
             if(dto == null){
                 return BadRequest("The person name is required for its creation.");
             }

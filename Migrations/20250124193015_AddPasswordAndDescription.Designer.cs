@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SecretSanta.Context;
 
@@ -10,9 +11,11 @@ using SecretSanta.Context;
 namespace SecretSanta.Migrations
 {
     [DbContext(typeof(SecretSantaContext))]
-    partial class SecretSantaContextModelSnapshot : ModelSnapshot
+    [Migration("20250124193015_AddPasswordAndDescription")]
+    partial class AddPasswordAndDescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,11 +28,7 @@ namespace SecretSanta.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("HashedPassword")
-                        .IsRequired()
+                    b.Property<string>("GiftDescription")
                         .HasColumnType("longtext");
 
                     b.Property<bool>("IsGeneratedMatches")
@@ -55,10 +54,6 @@ namespace SecretSanta.Migrations
 
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
-
-                    b.Property<string>("HashedPassword")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()

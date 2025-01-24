@@ -20,11 +20,9 @@ namespace SecretSanta.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] GroupDTO dto){
-            if(dto == null)
-            {
-                return BadRequest("The group name is required for its creation.");
-            }
+        public async Task<IActionResult> Create([FromBody] GroupCreateDTO dto){
+            if(dto.Name == null) return BadRequest("The group name is required for its creation.");
+            if(dto.Password == null) return BadRequest("The group name is required for its creation.");
             return CreatedAtAction(nameof(Create), await _service.CreateGroupAsync(dto));
         }
 
@@ -36,11 +34,13 @@ namespace SecretSanta.Controllers
             try
             {
                 var result = await _service.AddPersonToGroupAsync(personId, groupId);
-                return Ok(new { result.Id, result.Name,
+                return Ok(new { result.Id, result.Name, result.IsGeneratedMatches, result.Description,
                 people = result.People.Select(p => new
                 {
                     p.Id,
-                    p.Name
+                    p.Name,
+                    p.GiftDescription,
+                    p.GroupId
                 }).ToList() });
             }
             catch (NotFoundException ex)
