@@ -17,7 +17,11 @@ namespace SecretSanta.Controllers
         public PeopleController(IPeopleService service){
             _service = service;
         }
-
+        [HttpGet]
+        public async Task<IActionResult> GetAllPeople(){
+            return Ok(await _service.GetAllPeopleAsync());
+        }
+        
         [HttpPost("create")]
         public async Task<IActionResult> CreatePerson(PersonCreateDTO dto){
             if(dto.Name == null) return BadRequest("The person name is required for its creation.");

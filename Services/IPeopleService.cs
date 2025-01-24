@@ -8,6 +8,7 @@ namespace SecretSanta.Services
 {
     public interface IPeopleService
     {
+        Task<ICollection<PersonDTO>> GetAllPeopleAsync();
         Task<PersonDTO> CreatePersonAsync(PersonCreateDTO dto);
     }
 }

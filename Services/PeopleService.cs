@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SecretSanta.Context;
 using SecretSanta.DTO;
@@ -15,6 +16,19 @@ namespace SecretSanta.Services
         private readonly SecretSantaContext _context;
         public PeopleService(SecretSantaContext context){
             _context = context;
+        }
+        public async Task<ICollection<PersonDTO>> GetAllPeopleAsync()
+        {
+            var people = await _context.People.ToListAsync();
+
+            var peopleDTO = people.Select(p => new PersonDTO(
+                p.Id,
+                p.Name,
+                p.GiftDescription,
+                p.GroupId
+            )).ToList();
+
+            return peopleDTO;
         }
 
         public async Task<PersonDTO> CreatePersonAsync(PersonCreateDTO dto)
@@ -36,6 +50,6 @@ namespace SecretSanta.Services
             return result;
 
         }
-        
+
     }
 }
