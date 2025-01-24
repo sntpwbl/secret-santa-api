@@ -9,10 +9,7 @@ using SecretSanta.Entities;
 
 namespace SecretSanta.Services
 {
-    public interface IPeopleService
-    {
-        Task<PersonDTO> CreatePersonAsync(PersonCreateDTO dto);
-    }
+    
     public class PeopleService : IPeopleService
     {
         private readonly SecretSantaContext _context;

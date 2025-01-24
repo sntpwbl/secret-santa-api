@@ -13,11 +13,6 @@ using SecretSanta.Exceptions;
 
 namespace SecretSanta.Services
 {
-    public interface IGroupsService
-    {
-        Task<GroupDTO> CreateGroupAsync(GroupCreateDTO dto);
-        Task<GroupDTO> AddPersonToGroupAsync(int personId, int groupId);
-    }
 
     public class GroupsService : IGroupsService
     {
