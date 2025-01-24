@@ -15,14 +15,13 @@ builder.Services.AddScoped<IGroupsService, GroupsService>();
 builder.Services.AddScoped<IPeopleService, PeopleService>();
 
 var app = builder.Build();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseDeveloperExceptionPage();
 }
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseRouting();
 app.MapControllers();
 
