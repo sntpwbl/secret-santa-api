@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SecretSanta.Context;
+using SecretSanta.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
@@ -9,6 +10,9 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<SecretSantaContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("SecretSanta"))
 );
+
+builder.Services.AddScoped<IGroupsService, GroupsService>();
+builder.Services.AddScoped<IPeopleService, PeopleService>();
 
 var app = builder.Build();
 
