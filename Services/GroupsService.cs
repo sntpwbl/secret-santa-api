@@ -101,9 +101,16 @@ namespace SecretSanta.Services
             return dto;
         }
 
-        public async Task<GroupDTO> UpdateGroupAsync(GroupUpdateDTO dto)
+        public async Task<GroupDTO> UpdateGroupAsync(int groupId, GroupUpdateDTO dto)
         {
-            throw new NotImplementedException();
+            Group group = await _context.Groups.Include(g => g.People).FirstOrDefaultAsync(g => g.Id == groupId)
+                ?? throw new NotFoundException($"Group not found for ID {groupId}.");
+            
+            group.Name = dto.Name;
+            group.Description = dto.Description ?? group.Description;
+
+            await _context.SaveChangesAsync();
+            return new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
         }
 
         public async Task DeleteGroupAsync(int groupId)

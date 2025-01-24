@@ -89,6 +89,20 @@ namespace SecretSanta.Controllers
             }
         }
 
+        [HttpPut("{groupId}")]
+        public async Task<IActionResult> UpdateGroup(int groupId, GroupUpdateDTO dto){
+            if(dto.Name == null) return BadRequest("The group name is required for its update.");
+            var result = await _service.UpdateGroupAsync(groupId, dto);
+            return Ok(new { result.Id, result.Name, result.IsGeneratedMatches, result.Description,
+                people = result.People.Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.GiftDescription,
+                    p.GroupId
+                }).ToList()});
+        }
+
         [HttpDelete("{groupId}")]
         public async Task<IActionResult> DeleteGroup(int groupId){
             await _service.DeleteGroupAsync(groupId);
