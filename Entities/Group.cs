@@ -9,6 +9,7 @@ namespace SecretSanta.Entities
     {
         public int Id { get; set; }
         public required string Name { get; set; }
+        public bool IsGeneratedMatches { get; set; } = false;
         public required ICollection<Person> People { get; set; }
     }
 }

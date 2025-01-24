@@ -37,7 +37,7 @@ namespace SecretSanta.Controllers
             {
                 var result = await _service.AddPersonToGroupAsync(personId, groupId);
                 return Ok(new { result.Id, result.Name,
-                participants = result.People.Select(p => new
+                people = result.People.Select(p => new
                 {
                     p.Id,
                     p.Name
