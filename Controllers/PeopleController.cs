@@ -22,6 +22,11 @@ namespace SecretSanta.Controllers
             return Ok(await _service.GetAllPeopleAsync());
         }
         
+        [HttpGet("{personId}/selected")]
+        public async Task<IActionResult> GetSelectedPeople(int personId){
+            return Ok(await _service.GetSelectedPersonAsync(personId));
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> CreatePerson(PersonCreateDTO dto){
             if(dto.Name == null) return BadRequest("The person name is required for its creation.");

@@ -36,6 +36,11 @@ public class ExceptionMiddleware
             statusCode = (int)HttpStatusCode.NotFound;
             result = JsonSerializer.Serialize(new { error = exception.Message });
         }
+        if (exception is InvalidPasswordException)
+        {
+            statusCode = (int)HttpStatusCode.Unauthorized;
+            result = JsonSerializer.Serialize(new { error = exception.Message });
+        }
 
         context.Response.StatusCode = statusCode;
         return context.Response.WriteAsync(result);
