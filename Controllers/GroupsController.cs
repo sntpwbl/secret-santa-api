@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SecretSanta.DTO;
 using SecretSanta.Exceptions;
 using SecretSanta.Services;
@@ -86,6 +87,12 @@ namespace SecretSanta.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+        }
+
+        [HttpDelete("{groupId}")]
+        public async Task<IActionResult> DeleteGroup(int groupId){
+            await _service.DeleteGroupAsync(groupId);
+            return NoContent();
         }
 
     }

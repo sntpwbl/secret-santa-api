@@ -10,8 +10,10 @@ namespace SecretSanta.Services
     {
         Task<ICollection<GroupDTO>> GetAllGroupsAsync();
         Task<ICollection<GroupDTO>> GetGroupsByNameAsync(string name);
-        Task<GroupDTO> GetGroupByIdAsync(int id);
+        Task<GroupDTO> GetGroupByIdAsync(int groupId);
         Task<GroupDTO> CreateGroupAsync(GroupCreateDTO dto);
         Task<GroupDTO> AddPersonToGroupAsync(int personId, int groupId);
+        Task<GroupDTO> UpdateGroupAsync(GroupUpdateDTO dto);
+        Task DeleteGroupAsync(int groupId);
     }
 }
