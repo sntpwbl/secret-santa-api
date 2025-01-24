@@ -16,7 +16,6 @@ builder.Services.AddScoped<IPeopleService, PeopleService>();
 
 var app = builder.Build();
 
-// Middlewares
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

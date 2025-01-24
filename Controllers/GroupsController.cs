@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using SecretSanta.Context;
+using SecretSanta.DTO;
+using SecretSanta.Services;
 
 namespace SecretSanta.Controllers
 {
@@ -11,11 +12,19 @@ namespace SecretSanta.Controllers
     [Route("group")]
     public class GroupsController : ControllerBase
     {
-        private readonly SecretSantaContext _context;
+        private readonly IGroupsService _service;
 
-        public GroupsController(SecretSantaContext context)
-        {
-            _context = context;
+        public GroupsController(IGroupsService service){
+            _service = service;
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromBody] GroupDTO dto){
+            if(dto == null)
+            {
+                return BadRequest("The group name is required for its creation.");
+            }
+            return CreatedAtAction(nameof(Create), await _service.CreateGroupAsync(dto));
         }
     }
 }

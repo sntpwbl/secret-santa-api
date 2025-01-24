@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SecretSanta")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+68ca5f9820082c2c3e455f42c1d51bf77e7c367c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7c2f4ac2dd33c0ff20d251a6284daedc91dbbbc1")]
 [assembly: System.Reflection.AssemblyProductAttribute("SecretSanta")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SecretSanta")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

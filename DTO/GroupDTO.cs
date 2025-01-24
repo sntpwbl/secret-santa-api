@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SecretSanta.Entities
+namespace SecretSanta.DTO
 {
-    public class Group
+    public class GroupDTO
     {
-        public int Id { get; set; }
         public required string Name { get; set; }
-        public required ICollection<Person> People { get; set; }
     }
 }

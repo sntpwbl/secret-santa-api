@@ -8,8 +8,8 @@ namespace SecretSanta.Entities
     public class Person
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public required string Name { get; set; }
         public int GroupId { get; set; }
-        public Group group{ get; set; }
+        public Group? Group { get; set; }
     }
 }
