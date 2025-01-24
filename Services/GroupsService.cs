@@ -22,6 +22,46 @@ namespace SecretSanta.Services
         {
             _context = context;
         }
+        public async Task<ICollection<GroupDTO>> GetAllGroupsAsync()
+        {
+            var groups = await _context.Groups
+            .ToListAsync();
+
+            var groupDTOs = groups.Select(g => new GroupDTO(
+                g.Id,
+                g.Name,
+                g.IsGeneratedMatches,
+                g.Description,
+                []
+            )).ToList();
+
+            return groupDTOs;
+        }
+        public async Task<ICollection<GroupDTO>> GetGroupsByNameAsync(string name){
+            var groups = await _context.Groups
+                .Where(g => g.Name == name)
+                .ToListAsync() ?? throw new NotFoundException($"No group find with name {name}.");
+
+            var groupsDTO = groups.Select(g => new GroupDTO(
+                g.Id,
+                g.Name,
+                g.IsGeneratedMatches,
+                g.Description,
+                []
+            )).ToList();
+
+            return groupsDTO;
+
+        }
+
+        public async Task<GroupDTO> GetGroupByIdAsync(int groupId)
+        {
+            Group group = await _context.Groups.Include(g => g.People).FirstOrDefaultAsync(g => g.Id == groupId)
+                            ?? throw new NotFoundException($"Group not found for ID {groupId}.");
+            
+            GroupDTO dto = new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
+            return dto;
+        }
         public async Task<GroupDTO> CreateGroupAsync(GroupCreateDTO dto){
             
             Group group = new Group{
@@ -61,29 +101,7 @@ namespace SecretSanta.Services
             return dto;
         }
 
-        public async Task<ICollection<GroupDTO>> GetAllGroupsAsync()
-        {
-            var groups = await _context.Groups
-            .ToListAsync();
 
-            var groupDTOs = groups.Select(g => new GroupDTO(
-                g.Id,
-                g.Name,
-                g.IsGeneratedMatches,
-                g.Description,
-                g.People
-            )).ToList();
-
-            return groupDTOs;
-        }
-
-        public async Task<GroupDTO> GetGroupByIdAsync(int groupId)
-        {
-            Group group = await _context.Groups.Include(g => g.People).FirstOrDefaultAsync(g => g.Id == groupId)
-                            ?? throw new NotFoundException($"Group not found for ID {groupId}.");
-            
-            GroupDTO dto = new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
-            return dto;
-        }
+        
     }
 }

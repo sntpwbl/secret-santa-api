@@ -25,6 +25,21 @@ namespace SecretSanta.Controllers
             return Ok(groups);
         }
 
+        [HttpGet("/name/{groupName}")]
+        public async Task<IActionResult> GetGroupsByName(string groupName){
+            if(groupName==null) return BadRequest("Invalid group name.");
+            try
+            {
+                var groups = await _service.GetGroupsByNameAsync(groupName);
+                return Ok(groups);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+
+        }
+
         [HttpGet("{groupId}")]
         public async Task<IActionResult> GetGroupById(int groupId)
         {
