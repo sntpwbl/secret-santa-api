@@ -60,5 +60,19 @@ namespace SecretSanta.Services
             GroupDTO dto = new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
             return dto;
         }
+
+        public Task<ICollection<GroupDTO>> GetAllGroupsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<GroupDTO> GetGroupByIdAsync(int groupId)
+        {
+            Group group = await _context.Groups.Include(g => g.People).FirstOrDefaultAsync(g => g.Id == groupId)
+                            ?? throw new NotFoundException($"Group not found for ID {groupId}.");
+            
+            GroupDTO dto = new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
+            return dto;
+        }
     }
 }

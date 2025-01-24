@@ -14,7 +14,7 @@ namespace SecretSanta.DTO
         public string? Description { get; set; }
         public ICollection<Person> People { get; set; }
 
-        public GroupDTO(int id, string name, bool isGeneratedMatches, string? description, ICollection<Person> people)
+        public GroupDTO(int id, string name, bool isGeneratedMatches, string? description, ICollection<Person>? people)
         {
             Id = id;
             Name = name;

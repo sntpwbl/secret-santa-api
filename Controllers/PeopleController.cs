@@ -20,9 +20,9 @@ namespace SecretSanta.Controllers
 
         [HttpPost("create")]
         public async Task<IActionResult> CreatePerson(PersonCreateDTO dto){
-            if(dto == null){
-                return BadRequest("The person name is required for its creation.");
-            }
+            if(dto.Name == null) return BadRequest("The person name is required for its creation.");
+            if(dto.Password == null) return BadRequest("The person password is required for its creation.");
+
             return CreatedAtAction(nameof(CreatePerson), await _service.CreatePersonAsync(dto));
         }
     }

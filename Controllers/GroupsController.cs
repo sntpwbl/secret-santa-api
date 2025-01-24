@@ -22,14 +22,14 @@ namespace SecretSanta.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] GroupCreateDTO dto){
             if(dto.Name == null) return BadRequest("The group name is required for its creation.");
-            if(dto.Password == null) return BadRequest("The group name is required for its creation.");
+            if(dto.Password == null) return BadRequest("The group password is required for its creation.");
             return CreatedAtAction(nameof(Create), await _service.CreateGroupAsync(dto));
         }
 
         [HttpPost("{personId}/{groupId}")]
         public async Task<IActionResult> Update(int personId, int groupId){
             if(personId <= 0) return BadRequest("Invalid value for the person ID.");
-            if(groupId <= 0) return BadRequest("Invalid value for the person ID.");
+            if(groupId <= 0) return BadRequest("Invalid value for the group ID.");
 
             try
             {
@@ -41,7 +41,7 @@ namespace SecretSanta.Controllers
                     p.Name,
                     p.GiftDescription,
                     p.GroupId
-                }).ToList() });
+                }).ToList()});
             }
             catch (NotFoundException ex)
             {
@@ -52,5 +52,20 @@ namespace SecretSanta.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpGet("{groupId}")]
+        public async Task<IActionResult> GetGroupById(int groupId)
+        {
+            var result = await _service.GetGroupByIdAsync(groupId);
+            return Ok(new { result.Id, result.Name, result.IsGeneratedMatches, result.Description,
+                people = result.People.Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.GiftDescription,
+                    p.GroupId
+                }).ToList()});
+        }
     }
+    
 }
