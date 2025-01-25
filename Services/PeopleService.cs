@@ -22,12 +22,12 @@ namespace SecretSanta.Services
         {
             var people = await _context.People.ToListAsync();
 
-            var peopleDTO = people.Select(p => new PersonDTO(
-                p.Id,
-                p.Name,
-                p.GiftDescription,
-                p.GroupId
-            )).ToList();
+            var peopleDTO = people.Select(p => new PersonDTO{
+                Id = p.Id,
+                Name = p.Name,
+                GiftDescription = p.GiftDescription,
+                GroupId = p.GroupId
+            }).ToList();
 
             return peopleDTO;
         }
@@ -41,7 +41,7 @@ namespace SecretSanta.Services
             Person selectedPerson = await _context.People.FirstOrDefaultAsync(p => p.Id == person.SelectedPersonId)
                 ?? throw new NotFoundException($"Selected person not found for ID {person.SelectedPersonId}.");
             
-            return new PersonDTO(selectedPerson.Id, selectedPerson.Name, selectedPerson.GiftDescription, selectedPerson.GroupId);
+            return new PersonDTO{Id = selectedPerson.Id, Name = selectedPerson.Name, GiftDescription = selectedPerson.GiftDescription, GroupId = selectedPerson.GroupId};
         }
         public async Task<PersonDTO> LoginAsync(PersonCreateDTO dto)
         {
@@ -51,7 +51,7 @@ namespace SecretSanta.Services
             bool isPasswordValid = person.ValidatePassword(dto.Password);
 
             if(!isPasswordValid) throw new InvalidPasswordException($"Invalid password for person {dto.Name}.");
-            else return new PersonDTO(person.Id, person.Name, person.GiftDescription, person.GroupId);
+            else return new PersonDTO{Id = person.Id, Name = person.Name, GiftDescription = person.GiftDescription, GroupId = person.GroupId};
         }
 
         public async Task<PersonDTO> CreatePersonAsync(PersonCreateDTO dto)
@@ -61,18 +61,11 @@ namespace SecretSanta.Services
                 Name = dto.Name
             };
             person.HashedPassword = person.HashPassword(dto.Password);
-            
+
             EntityEntry<Person> createdPerson = await _context.People.AddAsync(person);
             await _context.SaveChangesAsync();
             
-            PersonDTO result = new PersonDTO(
-                createdPerson.Entity.Id,
-                createdPerson.Entity.Name,
-                createdPerson.Entity.GiftDescription,
-                createdPerson.Entity.GroupId
-            );
-
-            return result;
+            return new PersonDTO{Id = createdPerson.Entity.Id, Name = createdPerson.Entity.Name, GiftDescription = createdPerson.Entity.GiftDescription, GroupId = createdPerson.Entity.GroupId};
 
         }
 

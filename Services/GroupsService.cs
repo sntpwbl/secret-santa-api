@@ -27,28 +27,28 @@ namespace SecretSanta.Services
             var groups = await _context.Groups
             .ToListAsync();
 
-            var groupDTOs = groups.Select(g => new GroupDTO(
-                g.Id,
-                g.Name,
-                g.IsGeneratedMatches,
-                g.Description,
-                []
-            )).ToList();
+            var groupsDTO = groups.Select(g => new GroupDTO{
+                Id = g.Id,
+                Name = g.Name,
+                IsGeneratedMatches = g.IsGeneratedMatches,
+                Description = g.Description,
+                People = []
+            }).ToList();
 
-            return groupDTOs;
+            return groupsDTO;
         }
         public async Task<ICollection<GroupDTO>> GetGroupsByNameAsync(string name){
             var groups = await _context.Groups
                 .Where(g => g.Name == name)
                 .ToListAsync() ?? throw new NotFoundException($"No group find with name {name}.");
 
-            var groupsDTO = groups.Select(g => new GroupDTO(
-                g.Id,
-                g.Name,
-                g.IsGeneratedMatches,
-                g.Description,
-                []
-            )).ToList();
+            var groupsDTO = groups.Select(g => new GroupDTO{
+                Id = g.Id,
+                Name = g.Name,
+                IsGeneratedMatches = g.IsGeneratedMatches,
+                Description = g.Description,
+                People = []
+            }).ToList();
 
             return groupsDTO;
 
@@ -65,14 +65,7 @@ namespace SecretSanta.Services
             var createdGroup = await _context.Groups.AddAsync(group);
             await _context.SaveChangesAsync();
 
-            GroupDTO result = new GroupDTO(
-                createdGroup.Entity.Id,
-                createdGroup.Entity.Name,
-                createdGroup.Entity.IsGeneratedMatches,
-                createdGroup.Entity.Description,
-                createdGroup.Entity.People
-            );            
-            return result;
+            return new GroupDTO{Id= createdGroup.Entity.Id, Name = createdGroup.Entity.Name, IsGeneratedMatches = createdGroup.Entity.IsGeneratedMatches, Description = createdGroup.Entity.Description, People = createdGroup.Entity.People};
         }
 
         public async Task<GroupDTO> AddPersonToGroupAsync(int personId, int groupId){
@@ -88,8 +81,7 @@ namespace SecretSanta.Services
 
             await _context.SaveChangesAsync();
 
-            GroupDTO dto = new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
-            return dto;
+            return new GroupDTO{Id= group.Id, Name = group.Name, IsGeneratedMatches = group.IsGeneratedMatches, Description = group.Description, People = group.People};
         }
 
         public async Task<GroupDTO> RemovePersonFromGroupAsync(int personId, int groupId)
@@ -103,7 +95,7 @@ namespace SecretSanta.Services
             group.People.Remove(person);
             await _context.SaveChangesAsync();
 
-            return new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
+            return new GroupDTO{Id= group.Id, Name = group.Name, IsGeneratedMatches = group.IsGeneratedMatches, Description = group.Description, People = group.People};
         }
 
         public async Task<GroupDTO> UpdateGroupAsync(int groupId, GroupUpdateDTO dto)
@@ -115,7 +107,7 @@ namespace SecretSanta.Services
             group.Description = dto.Description ?? group.Description;
 
             await _context.SaveChangesAsync();
-            return new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
+            return new GroupDTO{Id= group.Id, Name = group.Name, IsGeneratedMatches = group.IsGeneratedMatches, Description = group.Description, People = group.People};
         }
 
         public async Task DeleteGroupAsync(int groupId)
@@ -137,7 +129,7 @@ namespace SecretSanta.Services
                 ?? throw new NotFoundException($"Group not found for ID {groupId}.");
             bool isPasswordValid = group.ValidatePassword(password);
             if (!isPasswordValid) throw new InvalidPasswordException($"Invalid password for group with ID {groupId}");
-            else return new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
+            else return new GroupDTO{Id= group.Id, Name = group.Name, IsGeneratedMatches = group.IsGeneratedMatches, Description = group.Description, People = group.People};
         }
 
         public async Task<GenerateMatchDTO> GenerateMatchAsync(int groupId)
