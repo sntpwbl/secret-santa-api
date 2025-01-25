@@ -51,18 +51,17 @@ namespace SecretSanta.Services
             bool isPasswordValid = person.ValidatePassword(dto.Password);
 
             if(!isPasswordValid) throw new InvalidPasswordException($"Invalid password for person {dto.Name}.");
-            else
-            {
-                
-            }
+            else return new PersonDTO(person.Id, person.Name, person.GiftDescription, person.GroupId);
         }
 
         public async Task<PersonDTO> CreatePersonAsync(PersonCreateDTO dto)
         {
+            
             Person person = new Person{
-                Name = dto.Name,
-                HashedPassword = dto.Password
+                Name = dto.Name
             };
+            person.HashedPassword = person.HashPassword(dto.Password);
+            
             EntityEntry<Person> createdPerson = await _context.People.AddAsync(person);
             await _context.SaveChangesAsync();
             

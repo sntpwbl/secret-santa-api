@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SecretSanta.DTO;
+using SecretSanta.Exceptions;
 using SecretSanta.Services;
 
 namespace SecretSanta.Controllers
@@ -21,10 +22,30 @@ namespace SecretSanta.Controllers
         public async Task<IActionResult> GetAllPeople(){
             return Ok(await _service.GetAllPeopleAsync());
         }
-        
+
         [HttpGet("{personId}/selected")]
         public async Task<IActionResult> GetSelectedPeople(int personId){
             return Ok(await _service.GetSelectedPersonAsync(personId));
+        }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(PersonCreateDTO dto){
+            try
+            {
+                if(dto.Name == null) return BadRequest("The person name is required for login.");
+                if(dto.Password == null) return BadRequest("The person password is required for login.");
+                return Ok(await _service.LoginAsync(dto));
+                
+            }
+            catch(NotFoundException ex){
+                return NotFound(ex.Message);
+            }
+            catch(InvalidPasswordException ex){
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpPost("create")]
