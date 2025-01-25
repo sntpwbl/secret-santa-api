@@ -76,6 +76,7 @@ namespace SecretSanta.Services
                             ?? throw new NotFoundException($"Group not found for ID {groupId}.");
 
             person.GroupId = group.Id;
+            person.SelectedPersonId = null;
             group.People ??= new List<Person>();
             group.People.Add(person);
 
