@@ -134,10 +134,51 @@ namespace SecretSanta.Services
         public async Task<GroupDTO> ValidateGroupPasswordAsync(int groupId, string password)
         {
             Group group = await _context.Groups.Include(g => g.People).FirstOrDefaultAsync(g => g.Id == groupId)
-                            ?? throw new NotFoundException($"Group not found for ID {groupId}.");
+                ?? throw new NotFoundException($"Group not found for ID {groupId}.");
             bool isPasswordValid = group.ValidatePassword(password);
             if (!isPasswordValid) throw new InvalidPasswordException($"Invalid password for group with ID {groupId}");
             else return new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
+        }
+
+        public async Task<GenerateMatchDTO> GenerateMatchAsync(int groupId)
+        {
+            Group group = await _context.Groups.Include(g => g.People).FirstOrDefaultAsync(g => g.Id == groupId)
+                ?? throw new NotFoundException($"Group not found for ID {groupId}.");
+
+            if(group.IsGeneratedMatches) throw new AlreadyGeneratedMatchException("You cannot generate matches for a group multiple times.");
+
+            if(group.People.Count() < 2 || group.People.Count() % 2 != 0) 
+                throw new InvalidNumberOfPeopleException("Your group needs to have two or more participants to generate matches. The total number of participants must be pair.");
+
+            
+            var peopleList = group.People.ToList();
+            var giverList = new List<Person>(peopleList); 
+            var receiverList = new List<Person>(peopleList);
+
+            var random = new Random();
+
+            receiverList = receiverList.OrderBy(_ => random.Next()).ToList();
+
+            foreach (var giver in giverList)
+            {
+                while (true)
+                {
+                    int index = random.Next(receiverList.Count);
+                    var potentialReceiver = receiverList[index];
+
+                    if (potentialReceiver.Id != giver.Id && giver.SelectedPersonId != potentialReceiver.Id)
+                    {
+                        giver.SelectedPersonId = potentialReceiver.Id;
+
+                        receiverList.RemoveAt(index);
+                        break;
+                    }
+                }
+            }
+            group.IsGeneratedMatches = true;
+            await _context.SaveChangesAsync();
+
+            return new GenerateMatchDTO{GenerateStatus = "Success", Generated = true, GroupId = group.Id};
         }
     }
 }

@@ -13,6 +13,7 @@ namespace SecretSanta.Services
         Task<GroupDTO> CreateGroupAsync(GroupCreateDTO dto);
         Task<GroupDTO> AddPersonToGroupAsync(int personId, int groupId);
         Task<GroupDTO> ValidateGroupPasswordAsync(int groupId, string password);
+        Task<GenerateMatchDTO> GenerateMatchAsync(int groupId);
         Task<GroupDTO> RemovePersonFromGroupAsync(int personId, int groupId);
         Task<GroupDTO> UpdateGroupAsync(int groupId, GroupUpdateDTO dto);
         Task DeleteGroupAsync(int groupId);

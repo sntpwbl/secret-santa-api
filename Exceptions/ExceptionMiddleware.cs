@@ -41,6 +41,17 @@ public class ExceptionMiddleware
             statusCode = (int)HttpStatusCode.Unauthorized;
             result = JsonSerializer.Serialize(new { error = exception.Message });
         }
+        if (exception is InvalidNumberOfPeopleException)
+        {
+            statusCode = (int)HttpStatusCode.Forbidden;
+            result = JsonSerializer.Serialize(new { error = exception.Message });
+        }
+        if (exception is AlreadyGeneratedMatchException)
+        {
+            statusCode = (int)HttpStatusCode.Forbidden;
+            result = JsonSerializer.Serialize(new { error = exception.Message });
+        }
+
 
         context.Response.StatusCode = statusCode;
         return context.Response.WriteAsync(result);

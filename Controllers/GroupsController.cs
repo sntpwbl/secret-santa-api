@@ -61,6 +61,10 @@ namespace SecretSanta.Controllers
             if(dto.Password == null) return BadRequest("The group password is required for its creation.");
             return CreatedAtAction(nameof(Create), await _service.CreateGroupAsync(dto));
         }
+        [HttpPost("generate/{groupId}")]
+        public async Task<IActionResult> GenerateMatch(int groupId){
+            return Ok(await _service.GenerateMatchAsync(groupId));
+        }
 
         [HttpPost("{personId}/{groupId}")]
         public async Task<IActionResult> Update(int personId, int groupId){
