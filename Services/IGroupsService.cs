@@ -8,8 +8,8 @@ namespace SecretSanta.Services
 {
     public interface IGroupsService
     {
-        Task<ICollection<GroupDTO>> GetAllGroupsAsync();
-        Task<ICollection<GroupDTO>> GetGroupsByNameAsync(string name);
+        Task<IEnumerable<GroupDTO>> GetAllGroupsAsync();
+        Task<IEnumerable<GroupDTO>> GetGroupsByNameAsync(string name);
         Task<GroupDTO> CreateGroupAsync(GroupCreateDTO dto);
         Task<GroupDTO> AddPersonToGroupAsync(int personId, int groupId);
         Task<GroupDTO> ValidateGroupPasswordAsync(int groupId, string password);

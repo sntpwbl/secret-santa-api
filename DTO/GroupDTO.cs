@@ -16,7 +16,7 @@ namespace SecretSanta.DTO
         public bool IsGeneratedMatches { get; set; }
         public string? Description { get; set; }
         // to-do: cast collection to persondto type
-        public ICollection<Person> People { get; set; } = new List<Person>();
+        public ICollection<PersonDTO> People { get; set; } = new List<PersonDTO>();
 
 
     }

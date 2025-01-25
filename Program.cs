@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using SecretSanta.Context;
 using SecretSanta.Services;
 using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => {
     options.EnableAnnotations();
@@ -20,6 +22,7 @@ builder.Services.AddSwaggerGen(options => {
         }
     });
 });
+
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<SecretSantaContext>(options =>
@@ -28,6 +31,7 @@ builder.Services.AddDbContext<SecretSantaContext>(options =>
 
 builder.Services.AddScoped<IGroupsService, GroupsService>();
 builder.Services.AddScoped<IPeopleService, PeopleService>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

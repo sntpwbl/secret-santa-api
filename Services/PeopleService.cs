@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SecretSanta.Context;
@@ -15,21 +16,16 @@ namespace SecretSanta.Services
     public class PeopleService : IPeopleService
     {
         private readonly SecretSantaContext _context;
-        public PeopleService(SecretSantaContext context){
+        private readonly IMapper _mapper;
+        public PeopleService(IMapper mapper, SecretSantaContext context){
             _context = context;
+            _mapper = mapper;
         }
-        public async Task<ICollection<PersonDTO>> GetAllPeopleAsync()
+        public async Task<IEnumerable<PersonDTO>> GetAllPeopleAsync()
         {
             var people = await _context.People.ToListAsync();
 
-            var peopleDTO = people.Select(p => new PersonDTO{
-                Id = p.Id,
-                Name = p.Name,
-                GiftDescription = p.GiftDescription,
-                GroupId = p.GroupId
-            }).ToList();
-
-            return peopleDTO;
+            return people.Select(_mapper.Map<PersonDTO>);
         }
         public async Task<PersonDTO> GetSelectedPersonAsync(int personId)
         {
@@ -41,7 +37,7 @@ namespace SecretSanta.Services
             Person selectedPerson = await _context.People.FirstOrDefaultAsync(p => p.Id == person.SelectedPersonId)
                 ?? throw new NotFoundException($"Selected person not found for ID {person.SelectedPersonId}.");
             
-            return new PersonDTO{Id = selectedPerson.Id, Name = selectedPerson.Name, GiftDescription = selectedPerson.GiftDescription, GroupId = selectedPerson.GroupId};
+            return _mapper.Map<PersonDTO>(selectedPerson);
         }
         public async Task<PersonDTO> LoginAsync(PersonCreateDTO dto)
         {
@@ -51,7 +47,7 @@ namespace SecretSanta.Services
             bool isPasswordValid = person.ValidatePassword(dto.Password);
 
             if(!isPasswordValid) throw new InvalidPasswordException($"Invalid password for person {dto.Name}.");
-            else return new PersonDTO{Id = person.Id, Name = person.Name, GiftDescription = person.GiftDescription, GroupId = person.GroupId};
+            else return _mapper.Map<PersonDTO>(person);
         }
 
         public async Task<PersonDTO> CreatePersonAsync(PersonCreateDTO dto)
@@ -65,8 +61,7 @@ namespace SecretSanta.Services
             EntityEntry<Person> createdPerson = await _context.People.AddAsync(person);
             await _context.SaveChangesAsync();
             
-            return new PersonDTO{Id = createdPerson.Entity.Id, Name = createdPerson.Entity.Name, GiftDescription = createdPerson.Entity.GiftDescription, GroupId = createdPerson.Entity.GroupId};
-
+            return _mapper.Map<PersonDTO>(createdPerson.Entity);
         }
 
         

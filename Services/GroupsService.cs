@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -17,55 +18,37 @@ namespace SecretSanta.Services
     public class GroupsService : IGroupsService
     {
         private readonly SecretSantaContext _context;
+        private readonly IMapper _mapper;
 
-        public GroupsService(SecretSantaContext context)
+        public GroupsService(IMapper mapper, SecretSantaContext context)
         {
             _context = context;
+            _mapper = mapper;
         }
-        public async Task<ICollection<GroupDTO>> GetAllGroupsAsync()
+        public async Task<IEnumerable<GroupDTO>> GetAllGroupsAsync()
         {
-            var groups = await _context.Groups
-            .ToListAsync();
-
-            var groupsDTO = groups.Select(g => new GroupDTO{
-                Id = g.Id,
-                Name = g.Name,
-                IsGeneratedMatches = g.IsGeneratedMatches,
-                Description = g.Description,
-                People = []
-            }).ToList();
-
-            return groupsDTO;
+            var groups = await _context.Groups.ToListAsync();
+            
+            return groups.Select(_mapper.Map<GroupDTO>);
         }
-        public async Task<ICollection<GroupDTO>> GetGroupsByNameAsync(string name){
+        public async Task<IEnumerable<GroupDTO>> GetGroupsByNameAsync(string name){
             var groups = await _context.Groups
                 .Where(g => g.Name == name)
                 .ToListAsync() ?? throw new NotFoundException($"No group find with name {name}.");
 
-            var groupsDTO = groups.Select(g => new GroupDTO{
-                Id = g.Id,
-                Name = g.Name,
-                IsGeneratedMatches = g.IsGeneratedMatches,
-                Description = g.Description,
-                People = []
-            }).ToList();
-
-            return groupsDTO;
-
+            return groups.Select(_mapper.Map<GroupDTO>);
         }
 
         public async Task<GroupDTO> CreateGroupAsync(GroupCreateDTO dto){
             
-            Group group = new Group{
-                Name = dto.Name,
-                Description = dto.Description??null,
-                People = []
-            };
-            group.HashedPassword = group.HashPassword(dto.Password);
+            Group group = _mapper.Map<Group>(dto);
+            group.HashedPassword = group.HashPassword(group.HashedPassword);
+
             var createdGroup = await _context.Groups.AddAsync(group);
+
             await _context.SaveChangesAsync();
 
-            return new GroupDTO{Id= createdGroup.Entity.Id, Name = createdGroup.Entity.Name, IsGeneratedMatches = createdGroup.Entity.IsGeneratedMatches, Description = createdGroup.Entity.Description, People = createdGroup.Entity.People};
+            return _mapper.Map<GroupDTO>(createdGroup.Entity);
         }
 
         public async Task<GroupDTO> AddPersonToGroupAsync(int personId, int groupId){
@@ -82,7 +65,7 @@ namespace SecretSanta.Services
 
             await _context.SaveChangesAsync();
 
-            return new GroupDTO{Id= group.Id, Name = group.Name, IsGeneratedMatches = group.IsGeneratedMatches, Description = group.Description, People = group.People};
+            return _mapper.Map<GroupDTO>(group);
         }
 
         public async Task<GroupDTO> RemovePersonFromGroupAsync(int personId, int groupId)
@@ -102,7 +85,8 @@ namespace SecretSanta.Services
             }
             await _context.SaveChangesAsync();
 
-            return new GroupDTO{Id= group.Id, Name = group.Name, IsGeneratedMatches = group.IsGeneratedMatches, Description = group.Description, People = group.People};
+            return _mapper.Map<GroupDTO>(group);
+
         }
 
         public async Task<GroupDTO> UpdateGroupAsync(int groupId, GroupUpdateDTO dto)
@@ -114,7 +98,8 @@ namespace SecretSanta.Services
             group.Description = dto.Description ?? group.Description;
 
             await _context.SaveChangesAsync();
-            return new GroupDTO{Id= group.Id, Name = group.Name, IsGeneratedMatches = group.IsGeneratedMatches, Description = group.Description, People = group.People};
+            return _mapper.Map<GroupDTO>(group);
+
         }
 
         public async Task DeleteGroupAsync(int groupId)
@@ -136,7 +121,8 @@ namespace SecretSanta.Services
                 ?? throw new NotFoundException($"Group not found for ID {groupId}.");
             bool isPasswordValid = group.ValidatePassword(password);
             if (!isPasswordValid) throw new InvalidPasswordException($"Invalid password for group with ID {groupId}");
-            else return new GroupDTO{Id= group.Id, Name = group.Name, IsGeneratedMatches = group.IsGeneratedMatches, Description = group.Description, People = group.People};
+            else return _mapper.Map<GroupDTO>(group);
+            
         }
 
         public async Task<GenerateMatchDTO> GenerateMatchAsync(int groupId)
