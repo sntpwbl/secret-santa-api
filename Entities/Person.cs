@@ -9,6 +9,7 @@ namespace SecretSanta.Entities
     public class Person
     {
         public int Id { get; set; }
+        
         public required string Name { get; set; }
         private string _hashedPassword;
 
