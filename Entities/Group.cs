@@ -19,7 +19,7 @@ namespace SecretSanta.Entities
         public string HashedPassword
         {
             get => _hashedPassword;
-            set => _hashedPassword = _passwordHasher.HashPassword(this, value);
+            set => _hashedPassword = value;
         }
         public required ICollection<Person> People { get; set; }
 
@@ -28,5 +28,7 @@ namespace SecretSanta.Entities
             var result = _passwordHasher.VerifyHashedPassword(this, _hashedPassword, password);
             return result == PasswordVerificationResult.Success;
         }
+        public string HashPassword(string password) => _passwordHasher.HashPassword(this, password);
+
     }
 }

@@ -66,11 +66,10 @@ namespace SecretSanta.Services
             
             Group group = new Group{
                 Name = dto.Name,
-                HashedPassword = dto.Password,
                 Description = dto.Description??null,
                 People = []
             };
-
+            group.HashedPassword = group.HashPassword(dto.Password);
             var createdGroup = await _context.Groups.AddAsync(group);
             await _context.SaveChangesAsync();
 
