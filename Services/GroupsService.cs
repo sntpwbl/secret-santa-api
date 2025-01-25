@@ -54,14 +54,6 @@ namespace SecretSanta.Services
 
         }
 
-        public async Task<GroupDTO> GetGroupByIdAsync(int groupId)
-        {
-            Group group = await _context.Groups.Include(g => g.People).FirstOrDefaultAsync(g => g.Id == groupId)
-                            ?? throw new NotFoundException($"Group not found for ID {groupId}.");
-            
-            GroupDTO dto = new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
-            return dto;
-        }
         public async Task<GroupDTO> CreateGroupAsync(GroupCreateDTO dto){
             
             Group group = new Group{
@@ -137,6 +129,15 @@ namespace SecretSanta.Services
 
             _context.Groups.Remove(group);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<GroupDTO> ValidateGroupPasswordAsync(int groupId, string password)
+        {
+            Group group = await _context.Groups.Include(g => g.People).FirstOrDefaultAsync(g => g.Id == groupId)
+                            ?? throw new NotFoundException($"Group not found for ID {groupId}.");
+            bool isPasswordValid = group.ValidatePassword(password);
+            if (!isPasswordValid) throw new InvalidPasswordException($"Invalid password for group with ID {groupId}");
+            else return new GroupDTO(group.Id, group.Name, group.IsGeneratedMatches, group.Description, group.People);
         }
     }
 }

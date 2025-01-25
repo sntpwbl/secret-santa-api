@@ -41,10 +41,10 @@ namespace SecretSanta.Controllers
 
         }
 
-        [HttpGet("{groupId}")]
-        public async Task<IActionResult> GetGroupById(int groupId)
+        [HttpPost("{groupId}")]
+        public async Task<IActionResult> GetGroupById(int groupId, [FromBody] string password)
         {
-            var result = await _service.GetGroupByIdAsync(groupId);
+            var result = await _service.ValidateGroupPasswordAsync(groupId, password);
             return Ok(new { result.Id, result.Name, result.IsGeneratedMatches, result.Description,
                 people = result.People.Select(p => new
                 {
