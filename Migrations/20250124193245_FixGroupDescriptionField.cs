@@ -10,28 +10,31 @@ namespace SecretSanta.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<string>(
+                name: "Description",
+                table: "Groups",
+                nullable: true);
 
             migrationBuilder.Sql("UPDATE `Groups` SET Description = GiftDescription");
 
             migrationBuilder.DropColumn(
-            name: "GiftDescription",
-            table: "Groups");
-            }
+                name: "GiftDescription",
+                table: "Groups");
+        }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-            name: "GiftDescription",
-            table: "Groups",
-            nullable: true);
+                name: "GiftDescription",
+                table: "Groups",
+                nullable: true);
 
             migrationBuilder.Sql("UPDATE `Groups` SET GiftDescription = Description");
 
             migrationBuilder.DropColumn(
-            name: "Description",
-            table: "Groups");
-
+                name: "Description",
+                table: "Groups");
         }
     }
 }

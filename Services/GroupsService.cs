@@ -39,7 +39,12 @@ namespace SecretSanta.Services
 
         public async Task<GroupDTO> CreateGroupAsync(GroupCreateDTO dto){
             
-            Group group = _mapper.Map<Group>(dto);
+            Group group = new Group{
+                Name = dto.Name,
+                HashedPassword = dto.Password,
+                Description = dto.Description,
+                People = []
+            };
             group.HashedPassword = group.HashPassword(group.HashedPassword);
 
             var createdGroup = await _context.Groups.AddAsync(group);

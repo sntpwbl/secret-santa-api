@@ -1,0 +1,31 @@
+services:
+  sql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    ports:
+      - 3306:3306
+    networks:
+      - secret-santa-network
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h sql --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  api:
+    depends_on:
+      sql:
+        condition: service_healthy
+    build: .
+    ports:
+      - 5000:8080
+    environment:
+    - ConnectionStrings__SecretSanta=Server=sql;Database=${MYSQL_DATABASE};User=${MYSQL_USER};Password=${MYSQL_PASSWORD};
+    restart: always
+    networks:
+      - secret-santa-network
+networks:
+  secret-santa-network:
+    driver: bridge
