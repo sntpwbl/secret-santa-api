@@ -4,7 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace SecretSanta.DTO
-{
+{   
+    /// <summary>
+    /// DTO used for sinalizing a match was created.
+    /// </summary>
     public class GenerateMatchDTO
     {
         public string GenerateStatus { get; set; } = "Success";

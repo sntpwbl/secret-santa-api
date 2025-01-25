@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace SecretSanta.DTO
 {
+    /// <summary>
+    /// DTO used for updating groups.
+    /// </summary>
     public class GroupUpdateDTO
     {
         public required string Name { get; set; }

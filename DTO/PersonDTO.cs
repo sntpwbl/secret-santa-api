@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace SecretSanta.DTO
 {
     /// <summary>
-    /// DTO used to return a person's data.
+    /// DTO used for returning people data.
     /// </summary>
     public class PersonDTO
     {

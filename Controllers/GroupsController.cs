@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SecretSanta.DTO;
 using SecretSanta.Exceptions;
 using SecretSanta.Services;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SecretSanta.Controllers
 {
@@ -21,12 +22,18 @@ namespace SecretSanta.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Find all created groups.", Description = "Returns every group in the database.")]
+        [SwaggerResponse(200, "Successfully returned all groups.", typeof(GroupDTO))]
+        [SwaggerResponse(500, "Internal server error.")]
         public async Task<IActionResult> GetAllGroups(){
             var groups = await _service.GetAllGroupsAsync();
             return Ok(groups);
         }
 
         [HttpGet("/name/{groupName}")]
+        [SwaggerOperation(Summary = "Find created groups by name.", Description = "Returns every group which matches the name passed by user.")]
+        [SwaggerResponse(200, "Successfully returned all groups.", typeof(GroupDTO))]
+        [SwaggerResponse(500, "Internal server error.")]
         public async Task<IActionResult> GetGroupsByName(string groupName){
             if(groupName==null) return BadRequest("Invalid group name.");
             try

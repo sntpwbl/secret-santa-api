@@ -94,6 +94,12 @@ namespace SecretSanta.Services
                 ?? throw new NotFoundException($"Group not found for ID {groupId}.");
             
             group.People.Remove(person);
+
+            if(group.IsGeneratedMatches){
+                person.SelectedPersonId = null;
+                group.People.Select(p=> p.SelectedPersonId = null);
+                group.IsGeneratedMatches = false;
+            }
             await _context.SaveChangesAsync();
 
             return new GroupDTO{Id= group.Id, Name = group.Name, IsGeneratedMatches = group.IsGeneratedMatches, Description = group.Description, People = group.People};
@@ -140,8 +146,8 @@ namespace SecretSanta.Services
 
             if(group.IsGeneratedMatches) throw new AlreadyGeneratedMatchException("You cannot generate matches for a group multiple times.");
 
-            if(group.People.Count() < 2 || group.People.Count() % 2 != 0) 
-                throw new InvalidNumberOfPeopleException("Your group needs to have two or more participants to generate matches. The total number of participants must be pair.");
+            if(group.People.Count() <= 2) 
+                throw new InvalidNumberOfPeopleException("Your group needs to have three or more participants to generate matches.");
 
             
             var peopleList = group.People.ToList();

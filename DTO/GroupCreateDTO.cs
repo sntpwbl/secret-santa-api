@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace SecretSanta.DTO
 {
+    /// <summary>
+    /// DTO used for group creation.
+    /// </summary>
     public class GroupCreateDTO
     {
         public required string Name { get; set; }

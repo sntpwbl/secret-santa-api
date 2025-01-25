@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace SecretSanta.DTO
 {
     /// <summary>
-    /// DTO used for people's authentication.
+    /// DTO used for authenticating.
     /// </summary>
     public class PersonCreateDTO
     {
